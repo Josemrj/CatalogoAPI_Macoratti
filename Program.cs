@@ -1,4 +1,5 @@
 using CatalogoAPI.ApiEndpoints;
+using CatalogoAPI.AppServicesExtensions;
 using CatalogoAPI.Context;
 using CatalogoAPI.Models;
 using CatalogoAPI.Services;
@@ -82,13 +83,11 @@ app.MapProdutosEndpoints();
 app.MapGetStringForJWTEndpoint();
 
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+var enviroment = app.Environment;
 
-app.UseHttpsRedirection();
+app.UseExceptionHandling(enviroment)
+   .UseSwaggerMiddleware()
+   .UseAppCors();
 
 //Use midlleware for JWT
 app.UseAuthentication();
