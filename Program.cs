@@ -1,19 +1,12 @@
 using CatalogoAPI.ApiEndpoints;
 using CatalogoAPI.AppServicesExtensions;
 using CatalogoAPI.Context;
-using CatalogoAPI.Models;
 using CatalogoAPI.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using System.Diagnostics.Metrics;
-using System.Reflection.Metadata;
-using System.Security.Cryptography;
 using System.Text;
-using static System.Net.Mime.MediaTypeNames;
 
 var builder = WebApplication.CreateBuilder(args);
 
