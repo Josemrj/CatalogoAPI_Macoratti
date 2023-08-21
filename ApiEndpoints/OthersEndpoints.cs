@@ -5,7 +5,7 @@ namespace CatalogoAPI.ApiEndpoints
 {
     public static class OthersEndpoints
     {
-        public static void GetStringForJWT(this WebApplication app)
+        public static void MapGetStringForJWTEndpoint(this WebApplication app)
         {
             app.MapGet("/generate-kay", async () =>
             {
