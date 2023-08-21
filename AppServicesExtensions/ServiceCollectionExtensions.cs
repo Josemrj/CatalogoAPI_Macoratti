@@ -1,15 +1,20 @@
-﻿using Microsoft.OpenApi.Models;
+﻿using CatalogoAPI.Context;
+using CatalogoAPI.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using System.Text;
 
 namespace CatalogoAPI.AppServicesExtensions
 {
     public static class ServiceCollectionExtensions
     {
-        public static WebApplicationBuilder AppApiSwagger(this WebApplicationBuilder builder)
+        public static WebApplicationBuilder AddApiSwagger(this WebApplicationBuilder builder)
         {
             builder.Services.AddSwagger();
             return builder;
         }
-
         public static IServiceCollection AddSwagger(this IServiceCollection services)
         {
             services.AddEndpointsApiExplorer();
@@ -43,6 +48,38 @@ namespace CatalogoAPI.AppServicesExtensions
                 });
             });
             return services;
+        }
+
+        public static WebApplicationBuilder AddPersistence(this WebApplicationBuilder builder)
+        {
+            string stringConnection = builder.Configuration.GetConnectionString("DefaultConnection");
+
+            builder.Services.AddDbContext<AppDbContext>(opt =>
+                 opt.UseMySql(stringConnection, ServerVersion
+                .AutoDetect(stringConnection)));
+
+            builder.Services.AddSingleton<ITokenService>(new TokenService());
+            return builder;
+        }
+
+        public static WebApplicationBuilder AddAutenticationJwt(this WebApplicationBuilder builder)
+        {
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt =>
+            {
+                opt.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+
+                    ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                    ValidAudience = builder.Configuration["Jwt:Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+                };
+            });
+            builder.Services.AddAuthorization();
+            return builder;
         }
 
     }
